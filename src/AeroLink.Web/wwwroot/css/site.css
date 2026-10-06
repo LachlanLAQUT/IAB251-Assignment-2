@@ -1,0 +1,23 @@
+/* AeroLink shared styles. Add module-specific styles below with a comment naming the story. */
+:root {
+  --aerolink-navy: #0b2545;
+  --aerolink-accent: #f4a259;
+}
+
+body {
+  background-color: #f5f7fa;
+}
+
+.navbar-aerolink {
+  background-color: var(--aerolink-navy);
+}
+
+.navbar-aerolink .navbar-brand,
+.navbar-aerolink .nav-link {
+  color: #fff;
+}
+
+.badge-special {
+  background-color: var(--aerolink-accent);
+  color: #000;
+}

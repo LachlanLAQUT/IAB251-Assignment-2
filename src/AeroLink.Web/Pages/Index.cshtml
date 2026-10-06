@@ -1,0 +1,27 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+@* Skeleton placeholder. T1 replaces this with the module tiles and Sign In option. *@
+<h1 class="h3 mb-3">AeroLink Ground Services</h1>
+<p class="text-muted">Skeleton is running. Database check:</p>
+
+<div class="row g-3">
+    <div class="col-sm-4">
+        <div class="card text-center"><div class="card-body">
+            <div class="display-6">@Model.FlightCount</div><div class="text-muted">Flights</div>
+        </div></div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card text-center"><div class="card-body">
+            <div class="display-6">@Model.BagCount</div><div class="text-muted">Bags</div>
+        </div></div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card text-center"><div class="card-body">
+            <div class="display-6">@Model.OpenExceptionCount</div><div class="text-muted">Open exceptions</div>
+        </div></div>
+    </div>
+</div>

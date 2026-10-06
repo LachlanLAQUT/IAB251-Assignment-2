@@ -1,0 +1,13 @@
+@page
+@model ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<h1 class="h3 text-danger">Something went wrong</h1>
+<p>An error occurred while processing your request. Please return to the home page and try again.</p>
+@if (!string.IsNullOrEmpty(Model.RequestId))
+{
+    <p class="text-muted small">Request ID: <code>@Model.RequestId</code></p>
+}
+<a class="btn btn-primary" asp-page="/Index">Back to home</a>

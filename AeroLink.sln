@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BE7F9AE8-3BCF-4D46-9DF1-686A79247163}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B21E91CA-0F16-4E38-9D5D-910966BFA751}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AeroLink.Web", "src\AeroLink.Web\AeroLink.Web.csproj", "{8D235D92-44B8-4A17-A2F9-830A0B369768}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AeroLink.Tests", "tests\AeroLink.Tests\AeroLink.Tests.csproj", "{93041AD0-5E77-4BD2-A81B-9B0A28268654}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D235D92-44B8-4A17-A2F9-830A0B369768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D235D92-44B8-4A17-A2F9-830A0B369768}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D235D92-44B8-4A17-A2F9-830A0B369768}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D235D92-44B8-4A17-A2F9-830A0B369768}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93041AD0-5E77-4BD2-A81B-9B0A28268654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93041AD0-5E77-4BD2-A81B-9B0A28268654}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93041AD0-5E77-4BD2-A81B-9B0A28268654}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93041AD0-5E77-4BD2-A81B-9B0A28268654}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8D235D92-44B8-4A17-A2F9-830A0B369768} = {BE7F9AE8-3BCF-4D46-9DF1-686A79247163}
+		{93041AD0-5E77-4BD2-A81B-9B0A28268654} = {B21E91CA-0F16-4E38-9D5D-910966BFA751}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C89ACCF6-9D25-468D-A186-DF803BAB16D8}
+	EndGlobalSection
+EndGlobal
