@@ -21,3 +21,8 @@ body {
   background-color: var(--aerolink-accent);
   color: #000;
 }
+
+/* T2: sign-in page */
+.login-card {
+    max-width: 420px;
+}
