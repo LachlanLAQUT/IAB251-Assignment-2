@@ -1,5 +1,6 @@
 using AeroLink.Web.Data;
 using AeroLink.Web.Services.Hr;
+using AeroLink.Web.Services.Login;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,8 @@ builder.Services.AddHttpClient<IHrApiClient, HrApiClient>(httpClient =>
     httpClient.BaseAddress = new Uri(hrApiBaseUrl);
     httpClient.Timeout = TimeSpan.FromSeconds(10);
 });
+
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 var app = builder.Build();
 
