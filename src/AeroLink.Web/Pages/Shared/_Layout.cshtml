@@ -24,6 +24,10 @@
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a class="nav-link" asp-page="/Index">Home</a></li>
+                        @if (employeeName is not null)
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-page="/Baggage/Index">Baggage</a></li>
+                        }
                         @* T1/I1: add module links here once the pages exist. *@
                     </ul>
                     <span class="navbar-text text-white-50">

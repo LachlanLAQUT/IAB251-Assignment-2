@@ -71,9 +71,9 @@ public class LoginModel : PageModel
         return RedirectAfterSignIn();
     }
 
-    /// <summary>Goes back to the requested page when it is on this site, otherwise to the main screen.</summary>
+    /// <summary>Goes back to the requested page when it is on this site, otherwise to the baggage module.</summary>
     private IActionResult RedirectAfterSignIn() =>
-        Url.IsLocalUrl(ReturnUrl) ? LocalRedirect(ReturnUrl) : RedirectToPage("/Index");
+        Url.IsLocalUrl(ReturnUrl) ? LocalRedirect(ReturnUrl) : RedirectToPage("/Baggage/Index");
 
     /// <summary>
     /// Raw form values. They are kept as text so <see cref="ILoginService"/> can report empty

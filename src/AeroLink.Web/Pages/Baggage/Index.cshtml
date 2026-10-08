@@ -1,0 +1,42 @@
+@page
+@model AeroLink.Web.Pages.Baggage.IndexModel
+@{
+    ViewData["Title"] = "Baggage module";
+}
+
+<h1 class="h3 mb-1">Baggage Unloading, Transfer and Loading Management</h1>
+<p class="text-muted mb-4">Signed in as @Model.Employee.Name &middot; @Model.Employee.Role</p>
+
+@* Each story adds its own card here and replaces "Coming soon" with a link to its page. *@
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5">Flight manifest</h2>
+                <p class="text-muted small">Select a departure flight and review the bags expected on it.</p>
+                <span class="badge text-bg-secondary">Coming soon</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h2 class="h5">Report a bag problem</h2>
+                <p class="text-muted small">Record a missing, damaged or otherwise problem bag for the Supervisor.</p>
+                <span class="badge text-bg-secondary">Coming soon</span>
+            </div>
+        </div>
+    </div>
+    @if (Model.Employee.IsSupervisor)
+    {
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5">Open exceptions</h2>
+                    <p class="text-muted small">Review reported problems and record a decision for each bag.</p>
+                    <span class="badge text-bg-secondary">Coming soon</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>
