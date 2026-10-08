@@ -1,0 +1,36 @@
+@page
+@model AeroLink.Web.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="card shadow-sm mx-auto login-card">
+    <div class="card-body p-4">
+        <h1 class="h4 mb-1">Sign in to AeroLink</h1>
+        <p class="text-muted small mb-4">Use your Employee ID and work email address from the HR system.</p>
+
+        @if (Model.ErrorMessage is not null)
+        {
+            <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+        }
+
+        @* novalidate: let the server's messages show instead of the browser's built-in pop-ups. *@
+        <form method="post" novalidate>
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <div class="mb-3">
+                <label asp-for="Input.EmployeeId" class="form-label"></label>
+                <input asp-for="Input.EmployeeId" class="form-control" inputmode="numeric"
+                       autocomplete="username" placeholder="e.g. 100101" autofocus />
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" type="email" class="form-control"
+                       autocomplete="email" placeholder="name@company.com" />
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Sign in</button>
+        </form>
+    </div>
+</div>
