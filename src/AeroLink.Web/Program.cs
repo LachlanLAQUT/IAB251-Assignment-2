@@ -1,4 +1,5 @@
 using AeroLink.Web.Data;
+using AeroLink.Web.Services.Hr;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,15 @@ builder.Services.AddSession(sessionOptions =>
 builder.Services.AddHttpContextAccessor();
 
 // Register feature services here as they are added to the application.
+
+// T2: typed HttpClient for the HR API. The base URL comes from HrApi:BaseUrl in appsettings.json.
+builder.Services.AddHttpClient<IHrApiClient, HrApiClient>(httpClient =>
+{
+    var hrApiBaseUrl = builder.Configuration["HrApi:BaseUrl"]
+        ?? throw new InvalidOperationException("HrApi:BaseUrl is missing from appsettings.json.");
+    httpClient.BaseAddress = new Uri(hrApiBaseUrl);
+    httpClient.Timeout = TimeSpan.FromSeconds(10);
+});
 
 var app = builder.Build();
 
