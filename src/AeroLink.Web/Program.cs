@@ -1,12 +1,18 @@
 using AeroLink.Web.Data;
 using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
+using AeroLink.Web.Shared;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Razor Pages handle the application's web pages.
-builder.Services.AddRazorPages();
+// T2: every page under /Baggage requires a signed-in baggage employee.
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AddFolderApplicationModelConvention("/Baggage",
+        pageModel => pageModel.Filters.Add(new RequireBaggageEmployeeFilter()));
+});
 
 // Read the database location from appsettings.json.
 builder.Services.AddDbContext<AppDbContext>(databaseOptions =>

@@ -1,5 +1,4 @@
 using AeroLink.Web.Shared;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AeroLink.Web.Pages.Baggage;
@@ -13,17 +12,10 @@ public class IndexModel : PageModel
     /// <summary>The employee using the module.</summary>
     public SignedInEmployee Employee { get; private set; } = null!;
 
-    /// <summary>Shows the module's functions, or sends a signed-out user to sign in.</summary>
-    /// <returns>The page, or a redirect to the sign-in page.</returns>
-    public IActionResult OnGet()
+    /// <summary>Shows the module's functions for the signed-in employee.</summary>
+    public void OnGet()
     {
-        var employee = HttpContext.Session.GetSignedInEmployee();
-        if (employee is null)
-        {
-            return RedirectToPage("/Account/Login", new { returnUrl = Url.Page("/Baggage/Index") });
-        }
-
-        Employee = employee;
-        return Page();
+        // RequireBaggageEmployeeFilter has already sent anyone who is not signed in to the sign-in page.
+        Employee = HttpContext.Session.GetSignedInEmployee()!;
     }
 }
