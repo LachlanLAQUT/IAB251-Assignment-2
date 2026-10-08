@@ -9,6 +9,11 @@
         <h1 class="h4 mb-1">Sign in to AeroLink</h1>
         <p class="text-muted small mb-4">Use your Employee ID and work email address from the HR system.</p>
 
+        @if (Model.StatusMessage is not null)
+        {
+            <div class="alert alert-success" role="status">@Model.StatusMessage</div>
+        }
+
         @if (Model.ErrorMessage is not null)
         {
             <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
