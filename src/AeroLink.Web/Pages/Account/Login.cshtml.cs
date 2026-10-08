@@ -32,8 +32,15 @@ public class LoginModel : PageModel
     [BindProperty(SupportsGet = true)]
     public string? ReturnUrl { get; set; }
 
+    /// <summary>TempData key used by other pages, such as Logout, to show a message here after a redirect.</summary>
+    public const string StatusMessageKey = "LoginStatusMessage";
+    
     /// <summary>Why the last sign-in attempt failed; null when there is nothing to show.</summary>
     public string? ErrorMessage { get; private set; }
+
+    /// <summary>One-off confirmation passed from another page, such as "You have been signed out."</summary>
+    [TempData(Key = StatusMessageKey)]
+    public string? StatusMessage { get; set; }
 
     /// <summary>Shows the form, or skips it when the employee is already signed in.</summary>
     /// <returns>The sign-in page, or a redirect for an employee who is already signed in.</returns>

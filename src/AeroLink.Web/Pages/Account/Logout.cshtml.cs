@@ -20,6 +20,9 @@ public class LogoutModel : PageModel
         // Clearing the session removes the employee ID, name and role stored at sign-in.
         HttpContext.Session.Clear();
 
+        // TempData survives exactly one redirect, so the message shows once on the sign-in page.
+        TempData[LoginModel.StatusMessageKey] = "You have been signed out.";
+
         return RedirectToPage("/Account/Login");
     }
 }
