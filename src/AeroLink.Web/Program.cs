@@ -1,6 +1,7 @@
 using AeroLink.Web.Data;
 using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
+using AeroLink.Web.Services.Manifests;
 using AeroLink.Web.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,9 @@ builder.Services.AddHttpClient<IHrApiClient, HrApiClient>(httpClient =>
 });
 
 builder.Services.AddScoped<ILoginService, LoginService>();
+
+// I1: flight list and departure manifest.
+builder.Services.AddScoped<IManifestService, ManifestService>();
 
 var app = builder.Build();
 
