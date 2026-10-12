@@ -1,0 +1,66 @@
+@page
+@model AeroLink.Web.Pages.Baggage.FlightsModel
+@{
+    ViewData["Title"] = "Select flight";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Select flight</li>
+    </ol>
+</nav>
+
+<h1 class="h3">Select a departure flight</h1>
+<p class="text-muted">Choose a flight to see the bags expected on it. Times are Brisbane time.</p>
+
+@if (Model.Message != null)
+{
+    <div class="alert alert-warning">@Model.Message</div>
+}
+
+@if (Model.Flights.Count == 0)
+{
+    <div class="alert alert-info">There are no departure flights.</div>
+}
+else
+{
+    <table class="table table-hover bg-white">
+        <thead class="table-light">
+            <tr>
+                <th>Flight</th>
+                <th>Route</th>
+                <th>Departs</th>
+                <th>Loading status</th>
+                <th>Loaded</th>
+                <th>Open exceptions</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var flight in Model.Flights)
+            {
+                <tr>
+                    <td class="fw-semibold">@flight.FlightNumber</td>
+                    <td>@flight.Route</td>
+                    <td>@flight.DepartureTimeText</td>
+                    <td>@flight.StatusText</td>
+                    <td>@flight.LoadedBags of @flight.ExpectedBags</td>
+                    <td>
+                        @if (flight.OpenExceptions > 0)
+                        {
+                            <span class="badge text-bg-danger">@flight.OpenExceptions open</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">None</span>
+                        }
+                    </td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-primary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">View manifest</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
