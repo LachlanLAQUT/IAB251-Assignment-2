@@ -1,0 +1,84 @@
+@page
+@model AeroLink.Web.Pages.Baggage.ManifestModel
+@{
+    var flight = Model.Manifest.Flight;
+    ViewData["Title"] = "Manifest " + flight.FlightNumber;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Flights">Select flight</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@flight.FlightNumber</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h1 class="h3 mb-1">@flight.FlightNumber &middot; @flight.Route</h1>
+        <p class="text-muted mb-0">Departs @flight.DepartureTimeText &middot; Loading: @flight.StatusText</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="./Flights">Change flight</a>
+</div>
+
+@if (flight.IsClosed)
+{
+    <div class="alert alert-success">Loading for this flight is closed. The manifest is read-only.</div>
+}
+
+<div class="row g-2 mb-4 text-center">
+    <div class="col"><div class="card"><div class="card-body py-2">
+        <div class="fs-4">@flight.ExpectedBags</div><div class="small text-muted">Expected</div>
+    </div></div></div>
+    <div class="col"><div class="card"><div class="card-body py-2">
+        <div class="fs-4 text-success">@flight.LoadedBags</div><div class="small text-muted">Loaded</div>
+    </div></div></div>
+    <div class="col"><div class="card"><div class="card-body py-2">
+        <div class="fs-4">@flight.ApprovedNotToLoadBags</div><div class="small text-muted">Approved not to load</div>
+    </div></div></div>
+    <div class="col"><div class="card"><div class="card-body py-2">
+        <div class="fs-4">@flight.OutstandingBags</div><div class="small text-muted">Outstanding</div>
+    </div></div></div>
+    <div class="col"><div class="card"><div class="card-body py-2">
+        <div class="fs-4 text-danger">@flight.OpenExceptions</div><div class="small text-muted">Open exceptions</div>
+    </div></div></div>
+</div>
+
+<table class="table bg-white">
+    <thead class="table-light">
+        <tr>
+            <th>Bag tag</th>
+            <th>Type</th>
+            <th>Handling instruction</th>
+            <th>Status</th>
+            <th>Loaded at</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bag in Model.Manifest.Bags)
+        {
+            <tr class="@(bag.HasOpenException ? "table-danger" : "")">
+                <td class="font-monospace">@bag.Tag</td>
+                <td>
+                    @if (bag.IsSpecial)
+                    {
+                        <span class="badge badge-special">@bag.TypeText</span>
+                    }
+                    else
+                    {
+                        @bag.TypeText
+                    }
+                </td>
+                <td class="small">@(bag.IsSpecial ? bag.HandlingInstruction : "-")</td>
+                <td>
+                    @bag.StatusText
+                    @if (bag.HasOpenException)
+                    {
+                        <span class="badge text-bg-danger ms-1">Open exception</span>
+                    }
+                </td>
+                <td>@bag.LoadedAtText</td>
+            </tr>
+        }
+    </tbody>
+</table>
