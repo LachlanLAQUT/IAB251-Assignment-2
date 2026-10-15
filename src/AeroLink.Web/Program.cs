@@ -2,6 +2,7 @@ using AeroLink.Web.Data;
 using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
 using AeroLink.Web.Services.Manifests;
+using AeroLink.Web.Services.Verification;
 using AeroLink.Web.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,6 +45,9 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 
 // I1: flight list and departure manifest.
 builder.Services.AddScoped<IManifestService, ManifestService>();
+
+// I2: check bag tags and confirm bags as loaded.
+builder.Services.AddScoped<IVerificationService, VerificationService>();
 
 var app = builder.Build();
 

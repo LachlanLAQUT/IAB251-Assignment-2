@@ -18,7 +18,13 @@
         <h1 class="h3 mb-1">@flight.FlightNumber &middot; @flight.Route</h1>
         <p class="text-muted mb-0">Departs @flight.DepartureTimeText &middot; Loading: @flight.StatusText</p>
     </div>
-    <a class="btn btn-outline-secondary" asp-page="./Flights">Change flight</a>
+    <div>
+        <a class="btn btn-outline-secondary" asp-page="./Flights">Change flight</a>
+        @if (!flight.IsClosed)
+        {
+            <a class="btn btn-primary" asp-page="./Verify" asp-route-flightId="@flight.FlightId">Verify bags</a>
+        }
+    </div>
 </div>
 
 @if (flight.IsClosed)
