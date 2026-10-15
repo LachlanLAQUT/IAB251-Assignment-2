@@ -1,0 +1,80 @@
+@page
+@model AeroLink.Web.Pages.Baggage.VerifyModel
+@{
+    var flight = Model.Flight;
+    var result = Model.Result;
+    ViewData["Title"] = "Verify bags " + flight.FlightNumber;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Flights">Select flight</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Manifest" asp-route-flightId="@flight.FlightId">@flight.FlightNumber</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Verify bags</li>
+    </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h1 class="h3 mb-1">Verify bags &middot; @flight.FlightNumber @flight.Route</h1>
+        <p class="text-muted mb-0">
+            Loaded @flight.LoadedBags of @flight.ExpectedBags &middot; Outstanding @flight.OutstandingBags
+            &middot; Loading: @flight.StatusText
+        </p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">Back to manifest</a>
+</div>
+
+@if (Model.Message != null)
+{
+    <div class="alert alert-success" role="status">@Model.Message</div>
+}
+
+@if (flight.IsClosed)
+{
+    <div class="alert alert-warning">Loading for this flight is closed. No more bags can be loaded.</div>
+}
+else
+{
+    <form method="post" asp-page-handler="Check" class="card card-body mb-3" style="max-width: 520px;">
+        <input type="hidden" asp-for="FlightId" />
+        <label asp-for="Tag" class="form-label fw-semibold">Bag tag</label>
+        <div class="input-group">
+            <input asp-for="Tag" class="form-control font-monospace" placeholder="e.g. DEMO-101-001"
+                   autocomplete="off" autofocus />
+            <button type="submit" class="btn btn-primary">Check</button>
+        </div>
+    </form>
+
+    @if (result != null && !result.Success)
+    {
+        <div class="alert alert-danger" role="alert" style="max-width: 520px;">
+            <strong>Not accepted.</strong> @result.Message
+        </div>
+    }
+
+    @if (result != null && result.Success)
+    {
+        <div class="card border-success mb-3" style="max-width: 520px;">
+            <div class="card-body">
+                <p class="mb-2"><strong class="text-success">OK to load.</strong> @result.Message</p>
+                <p class="mb-2">
+                    Tag <span class="font-monospace">@result.Tag</span> &middot; Type: @result.HandlingType
+                </p>
+                @if (result.IsSpecial)
+                {
+                    <div class="alert alert-warning py-2">
+                        <span class="badge badge-special">Special handling</span> @result.HandlingInstruction
+                    </div>
+                    @* I3: add the "I have read the instructions" tick box here. *@
+                }
+                <form method="post" asp-page-handler="Confirm">
+                    <input type="hidden" asp-for="FlightId" />
+                    <input type="hidden" name="Tag" value="@result.Tag" />
+                    <button type="submit" class="btn btn-success">Confirm loaded</button>
+                </form>
+            </div>
+        </div>
+    }
+}
