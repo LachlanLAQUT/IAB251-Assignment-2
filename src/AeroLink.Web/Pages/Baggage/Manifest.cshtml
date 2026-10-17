@@ -20,6 +20,7 @@
     </div>
     <div>
         <a class="btn btn-outline-secondary" asp-page="./Flights">Change flight</a>
+        <a class="btn btn-outline-secondary" asp-page="./Status" asp-route-flightId="@flight.FlightId">Loading status</a>
         @if (!flight.IsClosed)
         {
             <a class="btn btn-primary" asp-page="./Verify" asp-route-flightId="@flight.FlightId">Verify bags</a>
