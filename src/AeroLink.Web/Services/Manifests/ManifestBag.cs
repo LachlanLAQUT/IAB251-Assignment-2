@@ -76,4 +76,25 @@ public class ManifestBag
             return LoadedAtUtc.Value.AddHours(10).ToString("HH:mm");
         }
     }
+
+    /// <summary>
+    /// Builds a manifest row from a bag entity. The bag's <see cref="Bag.Exceptions"/> must already be
+    /// loaded so <see cref="HasOpenException"/> is correct.
+    /// Shared by the manifest page (I1) and the loading status report (T4).
+    /// </summary>
+    /// <param name="bag">The bag, with its exceptions included.</param>
+    /// <returns>The row to show on screen.</returns>
+    public static ManifestBag FromBag(Bag bag)
+    {
+        return new ManifestBag
+        {
+            BagId = bag.BagId,
+            Tag = bag.Tag,
+            HandlingType = bag.HandlingType,
+            HandlingInstruction = bag.HandlingInstruction,
+            Outcome = bag.Outcome,
+            LoadedAtUtc = bag.LoadedAtUtc,
+            HasOpenException = bag.Exceptions.Any(exception => exception.Status == ExceptionStatus.Open)
+        };
+    }
 }
