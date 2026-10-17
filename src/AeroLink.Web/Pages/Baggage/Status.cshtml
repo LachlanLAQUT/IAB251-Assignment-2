@@ -1,0 +1,204 @@
+@page
+@model AeroLink.Web.Pages.Baggage.StatusModel
+@{
+    var report = Model.Report;
+    var flight = report.Flight;
+    ViewData["Title"] = "Loading status " + flight.FlightNumber;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Flights">Select flight</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Manifest" asp-route-flightId="@flight.FlightId">@flight.FlightNumber</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Loading status</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Loading status &middot; @flight.FlightNumber @flight.Route</h1>
+        <p class="text-muted mb-0">
+            Departs @flight.DepartureTimeText &middot; Loading: @flight.StatusText
+            &middot; Updated @report.GeneratedAtText
+            @if (!flight.IsClosed)
+            {
+                <span>(refreshes every @StatusModel.RefreshSeconds seconds)</span>
+            }
+        </p>
+    </div>
+    <div>
+        <a class="btn btn-outline-secondary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">Manifest</a>
+        @if (!flight.IsClosed)
+        {
+            <a class="btn btn-outline-secondary" asp-page="./Verify" asp-route-flightId="@flight.FlightId">Verify bags</a>
+        }
+        <a class="btn btn-primary" asp-page="./Status" asp-route-flightId="@flight.FlightId">Refresh</a>
+    </div>
+</div>
+
+@* Readiness banner: the first thing the employee needs to know. *@
+@if (flight.IsClosed)
+{
+    <div class="alert alert-secondary" role="status">
+        <strong>Closed.</strong> Loading for this flight has been closed. This report is read-only.
+    </div>
+}
+else if (report.IsReadyToClose)
+{
+    <div class="alert alert-success" role="status">
+        <strong>Ready to close.</strong> Every expected bag is loaded or approved not to load, and no exception is open.
+        @if (Model.Employee.IsSupervisor)
+        {
+            <span>You can now close loading for this flight.</span>
+        }
+        else
+        {
+            <span>A Baggage Supervisor can now close loading for this flight.</span>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-warning" role="status">
+        <strong>Not ready to close.</strong>
+        <ul class="mb-0 mt-1">
+            @foreach (var reason in report.BlockingReasons)
+            {
+                <li>@reason</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row row-cols-2 row-cols-md-5 g-2 mb-3 text-center">
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4">@flight.ExpectedBags</div><div class="small text-muted">Expected</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4 text-success">@flight.LoadedBags</div><div class="small text-muted">Loaded</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4">@flight.ApprovedNotToLoadBags</div><div class="small text-muted">Approved not to load</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4 @(flight.OutstandingBags > 0 ? "text-warning-emphasis" : "")">@flight.OutstandingBags</div>
+        <div class="small text-muted">Outstanding</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4 @(flight.OpenExceptions > 0 ? "text-danger" : "")">@flight.OpenExceptions</div>
+        <div class="small text-muted">Open exceptions</div>
+    </div></div></div>
+</div>
+
+<div class="mb-4">
+    <div class="d-flex justify-content-between small text-muted mb-1">
+        <span>@report.AccountedForBags of @flight.ExpectedBags bags accounted for</span>
+        <span>
+            <span class="status-key status-key-loaded"></span> Loaded
+            <span class="status-key status-key-approved ms-2"></span> Approved not to load
+        </span>
+    </div>
+    <div class="progress-stacked status-progress" role="img"
+         aria-label="@report.AccountedForBags of @flight.ExpectedBags bags accounted for">
+        <div class="progress" style="width: @(report.LoadedPercent)%">
+            <div class="progress-bar bg-success"></div>
+        </div>
+        <div class="progress" style="width: @(report.ApprovedNotToLoadPercent)%">
+            <div class="progress-bar bg-secondary"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <h2 class="h5">Outstanding bags <span class="badge text-bg-light border">@report.OutstandingBags.Count</span></h2>
+        @if (report.OutstandingBags.Count == 0)
+        {
+            <p class="text-muted">No bags are outstanding.</p>
+        }
+        else
+        {
+            <table class="table table-sm bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th>Bag tag</th>
+                        <th>Type</th>
+                        <th>Needs attention</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bag in report.OutstandingBags)
+                    {
+                        <tr class="@(bag.HasOpenException ? "table-danger" : "")">
+                            <td class="font-monospace">@bag.Tag</td>
+                            <td>
+                                @if (bag.IsSpecial)
+                                {
+                                    <span class="badge badge-special">@bag.TypeText</span>
+                                }
+                                else
+                                {
+                                    @bag.TypeText
+                                }
+                            </td>
+                            <td>
+                                @if (bag.HasOpenException)
+                                {
+                                    <span class="badge text-bg-danger">Open exception</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Waiting to be loaded</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <div class="col-lg-6">
+        <h2 class="h5">Open exceptions <span class="badge text-bg-light border">@report.OpenExceptions.Count</span></h2>
+        @if (report.OpenExceptions.Count == 0)
+        {
+            <p class="text-muted">No exceptions are waiting for a supervisor decision.</p>
+        }
+        else
+        {
+            <table class="table table-sm bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th>Bag tag</th>
+                        <th>Problem</th>
+                        <th>Reported</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exception in report.OpenExceptions)
+                    {
+                        <tr>
+                            <td class="font-monospace">@exception.Tag</td>
+                            <td>
+                                <div class="fw-semibold">@exception.CategoryText</div>
+                                <div class="small text-muted">@exception.Description</div>
+                            </td>
+                            <td class="small">@exception.ReportedAtText</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @if (!flight.IsClosed)
+    {
+        @* Reload the report so new loads and decisions show up without pressing Refresh. *@
+        <script>
+            setTimeout(function () { window.location.reload(); }, @(StatusModel.RefreshSeconds * 1000));
+        </script>
+    }
+}

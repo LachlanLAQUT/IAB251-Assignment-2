@@ -22,6 +22,27 @@ body {
   color: #000;
 }
 
+/* T4: loading status report */
+.status-progress {
+    height: 1.25rem;
+}
+
+.status-key {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 2px;
+    vertical-align: middle;
+}
+
+.status-key-loaded {
+    background-color: var(--bs-success);
+}
+
+.status-key-approved {
+    background-color: var(--bs-secondary);
+}
+
 /* T2: sign-in page */
 .login-card {
     max-width: 420px;

@@ -78,4 +78,28 @@ public class FlightSummary
     {
         get { return LoadingStatus == LoadingStatus.Completed; }
     }
+
+    /// <summary>
+    /// Builds a summary from a flight entity. The flight's <see cref="Flight.Bags"/> and
+    /// <see cref="Flight.Exceptions"/> must already be loaded, otherwise the counts will be zero.
+    /// Shared by the manifest pages (I1) and the loading status report (T4) so both count bags the same way.
+    /// </summary>
+    /// <param name="flight">The flight, with its bags and exceptions included.</param>
+    /// <returns>The flight details and its loading counts.</returns>
+    public static FlightSummary FromFlight(Flight flight)
+    {
+        return new FlightSummary
+        {
+            FlightId = flight.FlightId,
+            FlightNumber = flight.FlightNumber,
+            DepartureAirport = flight.DepartureAirport,
+            ArrivalAirport = flight.ArrivalAirport,
+            DepartureTimeUtc = flight.ScheduledDepartureUtc,
+            LoadingStatus = flight.LoadingStatus,
+            ExpectedBags = flight.Bags.Count,
+            LoadedBags = flight.Bags.Count(bag => bag.Outcome == BagOutcome.Loaded),
+            ApprovedNotToLoadBags = flight.Bags.Count(bag => bag.Outcome == BagOutcome.ApprovedNotToLoad),
+            OpenExceptions = flight.Exceptions.Count(exception => exception.Status == ExceptionStatus.Open)
+        };
+    }
 }

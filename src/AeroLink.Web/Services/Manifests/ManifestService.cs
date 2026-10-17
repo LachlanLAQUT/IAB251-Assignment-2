@@ -30,7 +30,7 @@ public class ManifestService : IManifestService
             .AsNoTracking()
             .ToListAsync();
 
-        return flights.Select(CreateSummary).ToList();
+        return flights.Select(FlightSummary.FromFlight).ToList();
     }
 
     /// <inheritdoc />
@@ -55,42 +55,11 @@ public class ManifestService : IManifestService
 
         return new FlightManifest
         {
-            Flight = CreateSummary(flight),
+            Flight = FlightSummary.FromFlight(flight),
             Bags = flight.Bags
                 .OrderBy(bag => bag.Tag)
-                .Select(CreateManifestBag)
+                .Select(ManifestBag.FromBag)
                 .ToList()
-        };
-    }
-
-    private static FlightSummary CreateSummary(Flight flight)
-    {
-        return new FlightSummary
-        {
-            FlightId = flight.FlightId,
-            FlightNumber = flight.FlightNumber,
-            DepartureAirport = flight.DepartureAirport,
-            ArrivalAirport = flight.ArrivalAirport,
-            DepartureTimeUtc = flight.ScheduledDepartureUtc,
-            LoadingStatus = flight.LoadingStatus,
-            ExpectedBags = flight.Bags.Count,
-            LoadedBags = flight.Bags.Count(bag => bag.Outcome == BagOutcome.Loaded),
-            ApprovedNotToLoadBags = flight.Bags.Count(bag => bag.Outcome == BagOutcome.ApprovedNotToLoad),
-            OpenExceptions = flight.Exceptions.Count(exception => exception.Status == ExceptionStatus.Open)
-        };
-    }
-
-    private static ManifestBag CreateManifestBag(Bag bag)
-    {
-        return new ManifestBag
-        {
-            BagId = bag.BagId,
-            Tag = bag.Tag,
-            HandlingType = bag.HandlingType,
-            HandlingInstruction = bag.HandlingInstruction,
-            Outcome = bag.Outcome,
-            LoadedAtUtc = bag.LoadedAtUtc,
-            HasOpenException = bag.Exceptions.Any(exception => exception.Status == ExceptionStatus.Open)
         };
     }
 }

@@ -23,7 +23,10 @@
             &middot; Loading: @flight.StatusText
         </p>
     </div>
-    <a class="btn btn-outline-secondary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">Back to manifest</a>
+    <div>
+        <a class="btn btn-outline-secondary" asp-page="./Status" asp-route-flightId="@flight.FlightId">Loading status</a>
+        <a class="btn btn-outline-secondary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">Back to manifest</a>
+    </div>
 </div>
 
 @if (Model.Message != null)
