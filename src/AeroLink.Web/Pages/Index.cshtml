@@ -4,24 +4,37 @@
     ViewData["Title"] = "Home";
 }
 
-@* Skeleton placeholder. T1 replaces this with the module tiles and Sign In option. *@
-<h1 class="h3 mb-3">AeroLink Ground Services</h1>
-<p class="text-muted">Skeleton is running. Database check:</p>
+<div class="mb-4">
+    <h1 class="h3 mb-1">AeroLink Ground Services</h1>
+    @if (Model.Employee == null)
+    {
+        <p class="text-muted mb-3">Sign in with your Employee ID and work email to use the system.</p>
+        <a class="btn btn-primary" asp-page="/Account/Login">Sign in</a>
+    }
+    else
+    {
+        <p class="text-muted mb-0">Welcome, @Model.Employee.Name (@Model.Employee.Role). Choose a module to get started.</p>
+    }
+</div>
 
 <div class="row g-3">
-    <div class="col-sm-4">
-        <div class="card text-center"><div class="card-body">
-            <div class="display-6">@Model.FlightCount</div><div class="text-muted">Flights</div>
-        </div></div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card text-center"><div class="card-body">
-            <div class="display-6">@Model.BagCount</div><div class="text-muted">Bags</div>
-        </div></div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card text-center"><div class="card-body">
-            <div class="display-6">@Model.OpenExceptionCount</div><div class="text-muted">Open exceptions</div>
-        </div></div>
-    </div>
+    @foreach (var module in Model.Modules)
+    {
+        <div class="col-md-4">
+            <div class="card h-100 @(module.CanOpen ? "border-primary" : "bg-light")">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="h5">@module.Name</h2>
+                    <p class="text-muted small flex-grow-1">@module.Description</p>
+                    @if (module.CanOpen)
+                    {
+                        <a class="btn btn-primary" asp-page="@module.PagePath">Open</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted small">@module.LockedReason</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
 </div>

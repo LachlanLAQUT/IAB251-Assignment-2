@@ -1,39 +1,34 @@
-using AeroLink.Web.Data;
-using AeroLink.Web.Models;
+using AeroLink.Web.Services.MainScreen;
+using AeroLink.Web.Shared;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace AeroLink.Web.Pages;
 
 /// <summary>
-/// Shows current record counts on the home page.
+/// AeroLink main screen (T1). The entry point for every employee: shows the three modules and a sign-in option.
+/// No operational information is shown here, and no module can be opened until the employee has signed in.
 /// </summary>
 public class IndexModel : PageModel
 {
-    private readonly AppDbContext _databaseContext;
+    private readonly IMainScreenService _mainScreenService;
 
-    /// <summary>Creates the page model with access to the application database.</summary>
-    /// <param name="databaseContext">The application database context.</param>
-    public IndexModel(AppDbContext databaseContext)
+    /// <summary>Creates the page.</summary>
+    /// <param name="mainScreenService">Service that decides which modules can be opened.</param>
+    public IndexModel(IMainScreenService mainScreenService)
     {
-        _databaseContext = databaseContext;
+        _mainScreenService = mainScreenService;
     }
 
-    /// <summary>Number of flights currently stored.</summary>
-    public int FlightCount { get; private set; }
+    /// <summary>The signed-in employee, or null if nobody is signed in.</summary>
+    public SignedInEmployee? Employee { get; set; }
 
-    /// <summary>Number of bags currently stored.</summary>
-    public int BagCount { get; private set; }
+    /// <summary>The module tiles to show.</summary>
+    public List<ModuleTile> Modules { get; set; } = new List<ModuleTile>();
 
-    /// <summary>Number of exceptions waiting for a decision.</summary>
-    public int OpenExceptionCount { get; private set; }
-
-    /// <summary>Loads the latest record counts for the home page.</summary>
-    public async Task OnGetAsync()
+    /// <summary>Loads the module tiles for whoever is using the screen.</summary>
+    public void OnGet()
     {
-        FlightCount = await _databaseContext.Flights.CountAsync();
-        BagCount = await _databaseContext.Bags.CountAsync();
-        OpenExceptionCount = await _databaseContext.BaggageExceptions
-            .CountAsync(exception => exception.Status == ExceptionStatus.Open);
+        Employee = HttpContext.Session.GetSignedInEmployee();
+        Modules = _mainScreenService.GetModules(Employee);
     }
 }
