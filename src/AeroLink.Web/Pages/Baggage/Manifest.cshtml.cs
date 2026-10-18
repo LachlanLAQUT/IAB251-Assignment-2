@@ -1,4 +1,5 @@
 using AeroLink.Web.Services.Manifests;
+using AeroLink.Web.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -26,6 +27,9 @@ public class ManifestModel : PageModel
     /// <summary>The manifest being shown.</summary>
     public FlightManifest Manifest { get; set; } = new FlightManifest();
 
+    /// <summary>True when the signed-in employee is a Baggage Supervisor, who can review exceptions (I5).</summary>
+    public bool IsSupervisor { get; private set; }
+
     /// <summary>Message passed to the flight list if this flight cannot be shown.</summary>
     [TempData]
     public string? Message { get; set; }
@@ -43,6 +47,7 @@ public class ManifestModel : PageModel
         }
 
         Manifest = manifest;
+        IsSupervisor = HttpContext.Session.GetSignedInEmployee()?.IsSupervisor == true;
         return Page();
     }
 }

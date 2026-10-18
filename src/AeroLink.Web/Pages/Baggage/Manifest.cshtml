@@ -51,6 +51,20 @@
     </div></div></div>
 </div>
 
+@if (flight.OpenExceptions > 0 && !flight.IsClosed)
+{
+    <div class="alert alert-danger d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span>
+            This flight has @flight.OpenExceptions open @(flight.OpenExceptions == 1 ? "exception" : "exceptions").
+            Loading cannot be closed until a supervisor decides @(flight.OpenExceptions == 1 ? "it" : "them").
+        </span>
+        @if (Model.IsSupervisor)
+        {
+            <a class="btn btn-sm btn-danger" asp-page="./Exceptions" asp-route-flightId="@flight.FlightId">Review exceptions</a>
+        }
+    </div>
+}
+
 <table class="table bg-white">
     <thead class="table-light">
         <tr>
