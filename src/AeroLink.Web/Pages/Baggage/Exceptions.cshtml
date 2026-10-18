@@ -1,0 +1,88 @@
+@page
+@model AeroLink.Web.Pages.Baggage.ExceptionsModel
+@{
+    ViewData["Title"] = "Open exceptions";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Open exceptions</li>
+    </ol>
+</nav>
+
+<h1 class="h3 mb-1">Open exceptions</h1>
+<p class="text-muted">
+    Problems reported during loading that need a supervisor decision. A flight cannot be closed
+    while any of its exceptions are open.
+</p>
+
+@if (Model.Message != null)
+{
+    <div class="alert alert-success" role="status">@Model.Message</div>
+}
+
+<form method="get" class="row g-2 align-items-end mb-3" style="max-width: 520px;">
+    <div class="col">
+        <label for="flightFilter" class="form-label small text-muted mb-1">Flight</label>
+        <select id="flightFilter" name="flightId" class="form-select">
+            <option value="">All flights</option>
+            @foreach (var flight in Model.Flights)
+            {
+                <option value="@flight.FlightId" selected="@(flight.FlightId == Model.FlightId)">
+                    @flight.FlightNumber @flight.Route, @flight.DepartureTimeText (@flight.OpenExceptions open)
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Show</button>
+    </div>
+</form>
+
+@if (Model.OpenExceptions.Count == 0)
+{
+    <div class="alert alert-info">
+        No exceptions are waiting for a decision@(Model.FlightId != null ? " on this flight" : "").
+    </div>
+}
+else
+{
+    <table class="table bg-white align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Flight</th>
+                <th>Bag tag</th>
+                <th>Problem</th>
+                <th>Reported</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var exception in Model.OpenExceptions)
+            {
+                <tr>
+                    <td>
+                        <div class="fw-semibold">@exception.FlightNumber</div>
+                        <div class="small text-muted">@exception.Route, @exception.DepartureTimeText</div>
+                    </td>
+                    <td>
+                        <span class="font-monospace">@exception.Tag</span>
+                        @if (exception.IsSpecial)
+                        {
+                            <span class="badge badge-special ms-1">@exception.TypeText</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="fw-semibold">@exception.CategoryText</div>
+                        <div class="small text-muted">@exception.Description</div>
+                    </td>
+                    <td class="small">@exception.ReportedAtText</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-primary" asp-page="./Decide" asp-route-exceptionId="@exception.ExceptionId">Review</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
