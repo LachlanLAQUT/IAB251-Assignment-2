@@ -1,0 +1,108 @@
+@page
+@model AeroLink.Web.Pages.Baggage.DecideModel
+@{
+    var details = Model.Details;
+    ViewData["Title"] = "Exception " + details.Tag;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Exceptions">Open exceptions</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@details.Tag</li>
+    </ol>
+</nav>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">@details.CategoryText &middot; <span class="font-monospace">@details.Tag</span></h1>
+        <p class="text-muted mb-0">@details.FlightNumber @details.Route &middot; Departs @details.DepartureTimeText</p>
+    </div>
+    <a class="btn btn-outline-secondary" asp-page="./Exceptions" asp-route-flightId="@details.FlightId">Back to open exceptions</a>
+</div>
+
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-danger" role="alert"><strong>Not saved.</strong> @Model.ErrorMessage</div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="h5">Reported problem</h2>
+                <dl class="row mb-0">
+                    <dt class="col-5">Status</dt>
+                    <dd class="col-7">
+                        <span class="badge @(details.IsOpen ? "text-bg-danger" : "text-bg-secondary")">@details.StatusText</span>
+                    </dd>
+                    <dt class="col-5">Problem</dt>
+                    <dd class="col-7">@details.CategoryText</dd>
+                    <dt class="col-5">Comment</dt>
+                    <dd class="col-7">@details.Description</dd>
+                    <dt class="col-5">Reported</dt>
+                    <dd class="col-7">@details.ReportedAtText</dd>
+                    <dt class="col-5">Bag type</dt>
+                    <dd class="col-7">
+                        @if (details.IsSpecial)
+                        {
+                            <span class="badge badge-special">@details.TypeText</span>
+                            <div class="small mt-1">@details.HandlingInstruction</div>
+                        }
+                        else
+                        {
+                            @details.TypeText
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        @if (!details.IsOpen)
+        {
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5">Decision</h2>
+                    <p class="mb-1"><strong>@details.StatusText</strong> on @details.DecidedAtText</p>
+                    <p class="mb-0 text-muted">@(details.DecisionReason ?? "No note was recorded.")</p>
+                </div>
+            </div>
+        }
+        else if (details.IsFlightClosed)
+        {
+            <div class="alert alert-secondary">Loading for this flight is closed. This exception can no longer be changed.</div>
+        }
+        else
+        {
+            <form method="post" class="card">
+                <div class="card-body">
+                    <h2 class="h5">Record a decision</h2>
+                    <input type="hidden" asp-for="ExceptionId" />
+
+                    <label asp-for="Reason" class="form-label fw-semibold">Reason or note</label>
+                    <textarea asp-for="Reason" class="form-control mb-1" rows="3" maxlength="500"
+                              placeholder="e.g. Bag found in the transfer area and returned to the loading belt"></textarea>
+                    <div class="form-text mb-3">Required to approve not to load. Optional when resolving.</div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+                                <button type="submit" asp-page-handler="Resolve" class="btn btn-success w-100 mb-2">Resolve problem</button>
+                                <div class="small text-muted">The problem is sorted out. The bag stays outstanding and can be loaded.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 h-100">
+                                <button type="submit" asp-page-handler="Approve" class="btn btn-outline-danger w-100 mb-2"
+                                        onclick="return confirm('Approve bag @details.Tag not to be loaded?');">Approve not to load</button>
+                                <div class="small text-muted">The bag will not fly on this flight. It counts as accounted for.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        }
+    </div>
+</div>

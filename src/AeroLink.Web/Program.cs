@@ -1,4 +1,5 @@
 using AeroLink.Web.Data;
+using AeroLink.Web.Services.Exceptions;
 using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
 using AeroLink.Web.Services.MainScreen;
@@ -49,6 +50,9 @@ builder.Services.AddScoped<IMainScreenService, MainScreenService>();
 
 // I1: flight list and departure manifest.
 builder.Services.AddScoped<IManifestService, ManifestService>();
+
+// I5: supervisor decisions on baggage exceptions.
+builder.Services.AddScoped<IExceptionDecisionService, ExceptionDecisionService>();
 
 // I2: check bag tags and confirm bags as loaded.
 builder.Services.AddScoped<IVerificationService, VerificationService>();

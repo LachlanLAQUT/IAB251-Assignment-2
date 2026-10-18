@@ -1,4 +1,5 @@
 using AeroLink.Web.Shared;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AeroLink.Web.Pages.Baggage;
@@ -11,6 +12,13 @@ public class IndexModel : PageModel
 {
     /// <summary>The employee using the module.</summary>
     public SignedInEmployee Employee { get; private set; } = null!;
+
+    /// <summary>
+    /// Message from another page, e.g. when a Baggage Handler tries to open a supervisor page
+    /// (set by <see cref="RequireSupervisorAttribute"/>).
+    /// </summary>
+    [TempData]
+    public string? Message { get; set; }
 
     /// <summary>Shows the module's functions for the signed-in employee.</summary>
     public void OnGet()
