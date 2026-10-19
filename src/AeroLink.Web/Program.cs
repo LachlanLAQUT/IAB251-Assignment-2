@@ -4,6 +4,7 @@ using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
 using AeroLink.Web.Services.MainScreen;
 using AeroLink.Web.Services.Manifests;
+using AeroLink.Web.Services.Status;
 using AeroLink.Web.Services.Verification;
 using AeroLink.Web.Shared;
 using Microsoft.EntityFrameworkCore;
@@ -56,6 +57,9 @@ builder.Services.AddScoped<IExceptionDecisionService, ExceptionDecisionService>(
 
 // I2: check bag tags and confirm bags as loaded.
 builder.Services.AddScoped<IVerificationService, VerificationService>();
+
+// T4: loading status report for a departure flight.
+builder.Services.AddScoped<ILoadingStatusService, LoadingStatusService>();
 
 var app = builder.Build();
 
