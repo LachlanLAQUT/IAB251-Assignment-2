@@ -1,4 +1,5 @@
 using AeroLink.Web.Data;
+using AeroLink.Web.Services.Closure;
 using AeroLink.Web.Services.Exceptions;
 using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
@@ -60,6 +61,9 @@ builder.Services.AddScoped<IVerificationService, VerificationService>();
 
 // T4: loading status report for a departure flight.
 builder.Services.AddScoped<ILoadingStatusService, LoadingStatusService>();
+
+// I6: close loading and produce the final loading summary.
+builder.Services.AddScoped<ILoadingClosureService, LoadingClosureService>();
 
 var app = builder.Build();
 
