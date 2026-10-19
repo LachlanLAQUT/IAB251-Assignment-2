@@ -57,7 +57,14 @@ else
                         }
                     </td>
                     <td class="text-end">
-                        <a class="btn btn-sm btn-outline-secondary" asp-page="./Status" asp-route-flightId="@flight.FlightId">Status</a>
+                        @if (flight.IsClosed)
+                        {
+                            <a class="btn btn-sm btn-outline-success" asp-page="./Summary" asp-route-flightId="@flight.FlightId">Summary</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-sm btn-outline-secondary" asp-page="./Status" asp-route-flightId="@flight.FlightId">Status</a>
+                        }
                         <a class="btn btn-sm btn-primary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">View manifest</a>
                     </td>
                 </tr>

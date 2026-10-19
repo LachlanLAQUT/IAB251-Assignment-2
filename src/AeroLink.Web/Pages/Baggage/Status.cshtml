@@ -42,6 +42,7 @@
 {
     <div class="alert alert-secondary" role="status">
         <strong>Closed.</strong> Loading for this flight has been closed. This report is read-only.
+        <a class="btn btn-sm btn-outline-dark ms-2" asp-page="./Summary" asp-route-flightId="@flight.FlightId">View final summary</a>
     </div>
 }
 else if (report.IsReadyToClose)
@@ -51,6 +52,7 @@ else if (report.IsReadyToClose)
         @if (Model.Employee.IsSupervisor)
         {
             <span>You can now close loading for this flight.</span>
+            <a class="btn btn-sm btn-success ms-2" asp-page="./Close" asp-route-flightId="@flight.FlightId">Close loading</a>
         }
         else
         {

@@ -30,7 +30,10 @@
 
 @if (flight.IsClosed)
 {
-    <div class="alert alert-success">Loading for this flight is closed. The manifest is read-only.</div>
+    <div class="alert alert-success">
+        Loading for this flight is closed. The manifest is read-only.
+        <a class="btn btn-sm btn-outline-success ms-2" asp-page="./Summary" asp-route-flightId="@flight.FlightId">View final summary</a>
+    </div>
 }
 
 <div class="row g-2 mb-4 text-center">
