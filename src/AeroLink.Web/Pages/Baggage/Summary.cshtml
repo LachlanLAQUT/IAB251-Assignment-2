@@ -1,0 +1,133 @@
+@page
+@model AeroLink.Web.Pages.Baggage.SummaryModel
+@{
+    var summary = Model.Summary;
+    var flight = summary.Flight;
+    ViewData["Title"] = "Loading summary " + flight.FlightNumber;
+}
+
+<nav aria-label="breadcrumb" class="d-print-none">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item"><a asp-page="./Flights">Select flight</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@flight.FlightNumber summary</li>
+    </ol>
+</nav>
+
+@if (Model.Message != null)
+{
+    <div class="alert alert-success d-print-none" role="status">@Model.Message</div>
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div>
+        <h1 class="h3 mb-1">Final loading summary &middot; @flight.FlightNumber @flight.Route</h1>
+        <p class="text-muted mb-0">
+            Departs @flight.DepartureTimeText &middot; Closed @summary.ClosedAtText by @summary.ClosedByText
+        </p>
+    </div>
+    <div class="d-print-none">
+        <a class="btn btn-outline-secondary" asp-page="./Manifest" asp-route-flightId="@flight.FlightId">Manifest</a>
+        <button type="button" class="btn btn-primary" onclick="window.print();">Print</button>
+    </div>
+</div>
+
+<div class="alert alert-secondary">
+    <strong>Completed.</strong> Every expected bag was accounted for and no exception was open when loading closed.
+    This record is read-only.
+</div>
+
+<div class="row row-cols-2 row-cols-md-4 g-2 mb-4 text-center">
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4">@flight.ExpectedBags</div><div class="small text-muted">Expected</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4 text-success">@flight.LoadedBags</div><div class="small text-muted">Loaded</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4">@flight.ApprovedNotToLoadBags</div><div class="small text-muted">Approved not to load</div>
+    </div></div></div>
+    <div class="col"><div class="card h-100"><div class="card-body py-2">
+        <div class="fs-4">@summary.Exceptions.Count</div><div class="small text-muted">Exceptions reported</div>
+    </div></div></div>
+</div>
+
+<h2 class="h5">Approved not to load <span class="badge text-bg-light border">@summary.ApprovedNotToLoadBags.Count</span></h2>
+@if (summary.ApprovedNotToLoadBags.Count == 0)
+{
+    <p class="text-muted">Every bag was loaded.</p>
+}
+else
+{
+    <table class="table table-sm bg-white mb-4">
+        <thead class="table-light">
+            <tr><th>Bag tag</th><th>Type</th><th>Supervisor's reason</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var bag in summary.ApprovedNotToLoadBags)
+            {
+                <tr>
+                    <td class="font-monospace">@bag.Tag</td>
+                    <td>@bag.TypeText</td>
+                    <td>@(bag.Reason ?? "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2 class="h5">Exceptions <span class="badge text-bg-light border">@summary.Exceptions.Count</span></h2>
+@if (summary.Exceptions.Count == 0)
+{
+    <p class="text-muted">No problems were reported on this flight.</p>
+}
+else
+{
+    <table class="table table-sm bg-white mb-4">
+        <thead class="table-light">
+            <tr><th>Bag tag</th><th>Problem</th><th>Decision</th><th>Note or reason</th><th>Decided</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var exception in summary.Exceptions)
+            {
+                <tr>
+                    <td class="font-monospace">@exception.Tag</td>
+                    <td>
+                        <div>@exception.CategoryText</div>
+                        <div class="small text-muted">@exception.Description</div>
+                    </td>
+                    <td>@exception.StatusText</td>
+                    <td class="small">@(exception.DecisionReason ?? "-")</td>
+                    <td class="small">@exception.DecidedAtText</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2 class="h5">Loaded bags <span class="badge text-bg-light border">@summary.LoadedBags.Count</span></h2>
+<table class="table table-sm bg-white">
+    <thead class="table-light">
+        <tr><th>Bag tag</th><th>Type</th><th>Loaded at</th><th>Loaded by</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var bag in summary.LoadedBags)
+        {
+            <tr>
+                <td class="font-monospace">@bag.Tag</td>
+                <td>
+                    @if (bag.IsSpecial)
+                    {
+                        <span class="badge badge-special">@bag.TypeText</span>
+                    }
+                    else
+                    {
+                        @bag.TypeText
+                    }
+                </td>
+                <td>@bag.LoadedAtText</td>
+                <td>@bag.LoadedByText</td>
+            </tr>
+        }
+    </tbody>
+</table>
