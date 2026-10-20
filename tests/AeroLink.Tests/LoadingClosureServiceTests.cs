@@ -2,6 +2,7 @@ using AeroLink.Web.Data;
 using AeroLink.Web.Models;
 using AeroLink.Web.Services.Closure;
 using AeroLink.Web.Services.Exceptions;
+using AeroLink.Web.Services.SpecialHandling;
 using AeroLink.Web.Services.Verification;
 using AeroLink.Web.Shared;
 
@@ -121,8 +122,14 @@ public class LoadingClosureServiceTests
         using (AppDbContext db = testDb.CreateContext())
         {
             VerificationService verification = new VerificationService(db);
+            SpecialHandlingService specialHandling = new SpecialHandlingService(db, verification);
             for (int i = 2; i <= 10; i++)
             {
+                if (i >= 6)
+                {
+                    // I3: bags 006 to 010 are special and need their handling acknowledged before loading.
+                    await specialHandling.AcknowledgeHandlingAsync(102, "DEMO-102-" + i.ToString("000"), Handler);
+                }
                 VerificationResult loaded = await verification.ConfirmLoadedAsync(102, "DEMO-102-" + i.ToString("000"), Handler.EmployeeId);
                 Assert.True(loaded.Success);
             }
@@ -331,8 +338,14 @@ public class LoadingClosureServiceTests
         using (AppDbContext db = testDb.CreateContext())
         {
             VerificationService verification = new VerificationService(db);
+            SpecialHandlingService specialHandling = new SpecialHandlingService(db, verification);
             for (int i = 2; i <= 10; i++)
             {
+                if (i >= 6)
+                {
+                    // I3: bags 006 to 010 are special and need their handling acknowledged before loading.
+                    await specialHandling.AcknowledgeHandlingAsync(102, "DEMO-102-" + i.ToString("000"), Handler);
+                }
                 await verification.ConfirmLoadedAsync(102, "DEMO-102-" + i.ToString("000"), Handler.EmployeeId);
             }
         }

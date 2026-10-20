@@ -38,6 +38,14 @@ public class VerificationService : IVerificationService
         Bag bag = outcome.Bag!;
         Flight flight = outcome.Flight!;
 
+        // I3: a special bag cannot be loaded until its handling instruction has been acknowledged.
+        if (bag.IsSpecial && !bag.HandlingAcknowledged)
+        {
+            return VerificationResult.Rejected(VerificationProblem.HandlingNotAcknowledged,
+                "Bag " + bag.Tag + " needs " + bag.HandlingType.ToDisplayName().ToLowerInvariant()
+                + " handling. Acknowledge the handling instruction before confirming it as loaded.", bag.Tag);
+        }
+
         // 2. Mark the bag as loaded and record who loaded it and when.
         bag.Outcome = BagOutcome.Loaded;
         bag.LoadedAtUtc = DateTime.UtcNow;
@@ -149,6 +157,7 @@ public class VerificationService : IVerificationService
         result.Tag = tag;
         result.HandlingType = bag.HandlingType;
         result.HandlingInstruction = bag.HandlingInstruction;
+        result.HandlingAcknowledged = bag.HandlingAcknowledged;
 
         outcome.Result = result;
         outcome.Bag = bag;

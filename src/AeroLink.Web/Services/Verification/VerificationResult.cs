@@ -41,6 +41,12 @@ public class VerificationResult
     public string HandlingInstruction { get; set; } = "";
 
     /// <summary>
+    /// True once the employee has acknowledged a special bag's handling instruction (I3).
+    /// A special bag can only be confirmed as loaded when this is true.
+    /// </summary>
+    public bool HandlingAcknowledged { get; set; }
+
+    /// <summary>
     /// This is true when the bag exists and it is not a normal standard bag.
     /// </summary>
     public bool IsSpecial
