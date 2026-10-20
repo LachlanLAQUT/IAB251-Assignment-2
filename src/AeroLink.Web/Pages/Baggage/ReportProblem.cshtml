@@ -1,0 +1,92 @@
+@page
+@model AeroLink.Web.Pages.Baggage.ReportProblemModel
+@{
+    ViewData["Title"] = "Report a bag problem";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-page="./Index">Baggage</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Report a bag problem</li>
+    </ol>
+</nav>
+
+<h1 class="h3 mb-1">Report a bag problem</h1>
+<p class="text-muted">
+    Report a bag that is missing, damaged or has another problem. The bag cannot be loaded, and the flight
+    cannot be closed, until a Supervisor decides the report.
+</p>
+
+@if (Model.Message != null)
+{
+    <div class="alert alert-success" role="status" style="max-width: 560px;">
+        @Model.Message
+        @if (Model.FlightId != null)
+        {
+            <a class="alert-link ms-1" asp-page="./Manifest" asp-route-flightId="@Model.FlightId">Back to manifest</a>
+        }
+    </div>
+}
+
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-danger" role="alert" style="max-width: 560px;">
+        <strong>Not recorded.</strong> @Model.ErrorMessage
+    </div>
+}
+
+@if (Model.Flights.Count == 0)
+{
+    <div class="alert alert-info" style="max-width: 560px;">Every flight's loading is closed, so there is nothing to report.</div>
+}
+else
+{
+    <form method="post" class="card card-body" style="max-width: 560px;" novalidate>
+        <div class="mb-3">
+            <label asp-for="FlightId" class="form-label fw-semibold">Flight</label>
+            <select asp-for="FlightId" class="form-select">
+                <option value="">Choose a flight</option>
+                @foreach (var flight in Model.Flights)
+                {
+                    <option value="@flight.FlightId">@flight.FlightNumber @flight.Route, @flight.DepartureTimeText</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Tag" class="form-label fw-semibold">Bag tag</label>
+            <input asp-for="Tag" class="form-control font-monospace" placeholder="e.g. DEMO-101-003" autocomplete="off" />
+        </div>
+
+        <fieldset class="mb-3">
+            <legend class="form-label fw-semibold fs-6">Problem</legend>
+            @foreach (var problemType in ReportProblemModel.ProblemTypes)
+            {
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="Category" value="@problemType.Value"
+                           id="category-@problemType.Value" />
+                    <label class="form-check-label" for="category-@problemType.Value">@problemType.Text</label>
+                </div>
+            }
+        </fieldset>
+
+        <div class="mb-4">
+            <label asp-for="Comment" class="form-label fw-semibold">What is wrong?</label>
+            <textarea asp-for="Comment" class="form-control" rows="4" maxlength="500"
+                      placeholder="e.g. Not in the loading area or on the belt."></textarea>
+            <div class="form-text">Up to 500 characters. The Supervisor reads this when investigating.</div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">Report problem</button>
+            @if (Model.FlightId != null)
+            {
+                <a class="btn btn-outline-secondary" asp-page="./Manifest" asp-route-flightId="@Model.FlightId">Cancel</a>
+            }
+            else
+            {
+                <a class="btn btn-outline-secondary" asp-page="./Index">Cancel</a>
+            }
+        </div>
+    </form>
+}

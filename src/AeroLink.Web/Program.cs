@@ -65,6 +65,9 @@ builder.Services.AddScoped<ILoadingStatusService, LoadingStatusService>();
 // I6: close loading and produce the final loading summary.
 builder.Services.AddScoped<ILoadingClosureService, LoadingClosureService>();
 
+// I4: Baggage Handlers report problems with bags as open exceptions.
+builder.Services.AddScoped<IProblemReportService, ProblemReportService>();
+
 var app = builder.Build();
 
 DatabaseInitializer.Initialise(app.Services, app.Configuration);

@@ -76,6 +76,7 @@
             <th>Handling instruction</th>
             <th>Status</th>
             <th>Loaded at</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -102,6 +103,14 @@
                     }
                 </td>
                 <td>@bag.LoadedAtText</td>
+                <td class="text-end">
+                    @* I4: an outstanding bag with no open report can have a problem reported against it. *@
+                    @if (!flight.IsClosed && bag.Outcome == BagOutcome.Pending && !bag.HasOpenException)
+                    {
+                        <a class="btn btn-sm btn-outline-danger" asp-page="./ReportProblem"
+                           asp-route-flightId="@flight.FlightId" asp-route-tag="@bag.Tag">Report problem</a>
+                    }
+                </td>
             </tr>
         }
     </tbody>
