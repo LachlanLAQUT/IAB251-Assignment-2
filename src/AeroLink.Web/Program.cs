@@ -5,6 +5,7 @@ using AeroLink.Web.Services.Hr;
 using AeroLink.Web.Services.Login;
 using AeroLink.Web.Services.MainScreen;
 using AeroLink.Web.Services.Manifests;
+using AeroLink.Web.Services.SpecialHandling;
 using AeroLink.Web.Services.Status;
 using AeroLink.Web.Services.Verification;
 using AeroLink.Web.Shared;
@@ -67,6 +68,9 @@ builder.Services.AddScoped<ILoadingClosureService, LoadingClosureService>();
 
 // I4: Baggage Handlers report problems with bags as open exceptions.
 builder.Services.AddScoped<IProblemReportService, ProblemReportService>();
+
+// I3: special-handling acknowledgement before a special bag can be loaded.
+builder.Services.AddScoped<ISpecialHandlingService, SpecialHandlingService>();
 
 var app = builder.Build();
 
