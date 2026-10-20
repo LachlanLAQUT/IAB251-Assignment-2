@@ -1,4 +1,5 @@
 using AeroLink.Web.Services.Manifests;
+using AeroLink.Web.Services.SpecialHandling;
 using AeroLink.Web.Services.Verification;
 using AeroLink.Web.Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +16,18 @@ public class VerifyModel : PageModel
 {
     private readonly IVerificationService _verificationService;
     private readonly IManifestService _manifestService;
+    private readonly ISpecialHandlingService _specialHandlingService;
 
     /// <summary>Creates the page.</summary>
     /// <param name="verificationService">Service that checks tags and loads bags.</param>
     /// <param name="manifestService">Service that reads the flight's progress for the header.</param>
-    public VerifyModel(IVerificationService verificationService, IManifestService manifestService)
+    /// <param name="specialHandlingService">Service that records special-handling acknowledgements (I3).</param>
+    public VerifyModel(IVerificationService verificationService, IManifestService manifestService,
+        ISpecialHandlingService specialHandlingService)
     {
         _verificationService = verificationService;
         _manifestService = manifestService;
+        _specialHandlingService = specialHandlingService;
     }
 
     /// <summary>The selected flight, taken from the address.</summary>
@@ -39,6 +44,9 @@ public class VerifyModel : PageModel
     /// <summary>The result of the last check or confirm. Null before a tag has been checked.</summary>
     public VerificationResult? Result { get; set; }
 
+    /// <summary>Confirmation shown after a special bag's handling instruction is acknowledged (I3).</summary>
+    public string? AcknowledgementMessage { get; set; }
+
     /// <summary>Message shown after a bag has been loaded.</summary>
     [TempData]
     public string? Message { get; set; }
@@ -54,6 +62,28 @@ public class VerifyModel : PageModel
     /// <returns>The page showing whether the bag is OK to load.</returns>
     public async Task<IActionResult> OnPostCheckAsync()
     {
+        Result = await _verificationService.CheckTagAsync(FlightId, Tag);
+        return await ShowPageAsync();
+    }
+
+    /// <summary>
+    /// Records that the employee has read a special bag's handling instruction (I3), then shows the bag again
+    /// with "Confirm loaded" enabled.
+    /// </summary>
+    /// <returns>The page showing the bag's updated check result.</returns>
+    public async Task<IActionResult> OnPostAcknowledgeAsync()
+    {
+        // The sign-in filter makes sure someone is signed in on every /Baggage page.
+        SignedInEmployee employee = HttpContext.Session.GetSignedInEmployee()!;
+
+        AcknowledgementResult acknowledgement =
+            await _specialHandlingService.AcknowledgeHandlingAsync(FlightId, Tag, employee);
+        if (acknowledgement.Success)
+        {
+            AcknowledgementMessage = acknowledgement.Message;
+        }
+
+        // Check the bag again so the page shows its current state, including any reason it can no longer load.
         Result = await _verificationService.CheckTagAsync(FlightId, Tag);
         return await ShowPageAsync();
     }
