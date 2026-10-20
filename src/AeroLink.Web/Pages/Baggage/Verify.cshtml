@@ -34,6 +34,11 @@
     <div class="alert alert-success" role="status">@Model.Message</div>
 }
 
+@if (Model.AcknowledgementMessage != null)
+{
+    <div class="alert alert-success" role="status" style="max-width: 520px;">@Model.AcknowledgementMessage</div>
+}
+
 @if (flight.IsClosed)
 {
     <div class="alert alert-warning">Loading for this flight is closed. No more bags can be loaded.</div>
@@ -63,19 +68,38 @@ else
             <div class="card-body">
                 <p class="mb-2"><strong class="text-success">OK to load.</strong> @result.Message</p>
                 <p class="mb-2">
-                    Tag <span class="font-monospace">@result.Tag</span> &middot; Type: @result.HandlingType
+                    Tag <span class="font-monospace">@result.Tag</span> &middot; Type: @result.HandlingType?.ToDisplayName()
                 </p>
+                @* I3: a special bag's handling instruction must be acknowledged before it can be loaded. *@
                 @if (result.IsSpecial)
                 {
-                    <div class="alert alert-warning py-2">
-                        <span class="badge badge-special">Special handling</span> @result.HandlingInstruction
+                    <div class="alert @(result.HandlingAcknowledged ? "alert-success" : "alert-warning") py-2">
+                        <div class="mb-1">
+                            <span class="badge badge-special">@result.HandlingType?.ToDisplayName()</span>
+                            <strong>Special handling instruction</strong>
+                        </div>
+                        <p class="mb-2">@result.HandlingInstruction</p>
+                        @if (result.HandlingAcknowledged)
+                        {
+                            <div class="small fw-semibold">&#10003; Instruction acknowledged</div>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page-handler="Acknowledge">
+                                <input type="hidden" asp-for="FlightId" />
+                                <input type="hidden" name="Tag" value="@result.Tag" />
+                                <button type="submit" class="btn btn-sm btn-warning">I have read and will follow this instruction</button>
+                            </form>
+                        }
                     </div>
-                    @* I3: add the "I have read the instructions" tick box here. *@
+                }
+                @{
+                    bool canConfirm = !result.IsSpecial || result.HandlingAcknowledged;
                 }
                 <form method="post" asp-page-handler="Confirm">
                     <input type="hidden" asp-for="FlightId" />
                     <input type="hidden" name="Tag" value="@result.Tag" />
-                    <button type="submit" class="btn btn-success">Confirm loaded</button>
+                    <button type="submit" class="btn btn-success" disabled="@(!canConfirm)">Confirm loaded</button>
                     @* I4: if the bag turns out to be damaged or has another problem, report it instead of loading. *@
                     <a class="btn btn-outline-danger ms-2" asp-page="./ReportProblem"
                        asp-route-flightId="@flight.FlightId" asp-route-tag="@result.Tag">Report a problem with this bag</a>

@@ -30,5 +30,11 @@ public enum VerificationProblem
     ApprovedNotToLoad,
 
     /// <summary>The bag has a reported problem the supervisor has not decided yet.</summary>
-    OpenException
+    OpenException,
+
+    /// <summary>
+    /// The bag needs special handling and its handling instruction has not been acknowledged yet (I3).
+    /// Only returned when confirming a bag as loaded, not when checking a tag.
+    /// </summary>
+    HandlingNotAcknowledged
 }

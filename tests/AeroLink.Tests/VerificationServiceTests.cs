@@ -1,6 +1,8 @@
 using AeroLink.Web.Data;
 using AeroLink.Web.Models;
+using AeroLink.Web.Services.SpecialHandling;
 using AeroLink.Web.Services.Verification;
+using AeroLink.Web.Shared;
 
 namespace AeroLink.Tests;
 
@@ -345,10 +347,17 @@ public class VerificationServiceTests
         using TestDatabase testDb = new TestDatabase();
         using AppDbContext db = testDb.CreateContext();
         VerificationService service = new VerificationService(db);
+        SpecialHandlingService specialHandling = new SpecialHandlingService(db, service);
+        SignedInEmployee handler = new SignedInEmployee(EmployeeId, "S Mitchell", "Baggage Handler");
 
         for (int i = 1; i <= 10; i++)
         {
             string tag = "DEMO-101-" + i.ToString("000");
+            if (i >= 6)
+            {
+                // I3: bags 006 to 010 are special and need their handling acknowledged before loading.
+                await specialHandling.AcknowledgeHandlingAsync(101, tag, handler);
+            }
             VerificationResult result = await service.ConfirmLoadedAsync(101, tag, EmployeeId);
             Assert.True(result.Success);
         }

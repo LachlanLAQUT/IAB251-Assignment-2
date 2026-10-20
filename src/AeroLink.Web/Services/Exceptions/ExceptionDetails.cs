@@ -105,14 +105,7 @@ public class ExceptionDetails
     /// <summary>Bag type as text, e.g. "Sporting equipment".</summary>
     public string TypeText
     {
-        get
-        {
-            if (HandlingType == HandlingType.SportingEquipment)
-            {
-                return "Sporting equipment";
-            }
-            return HandlingType.ToString();
-        }
+        get { return HandlingType.ToDisplayName(); }
     }
 
     /// <summary>Departure time in Brisbane time (UTC+10), e.g. "Mon 5 Oct 13:30".</summary>
