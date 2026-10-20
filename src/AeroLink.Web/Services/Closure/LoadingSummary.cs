@@ -67,7 +67,7 @@ public class SummaryBag
     /// <summary>Bag type as text, e.g. "Sporting equipment".</summary>
     public string TypeText
     {
-        get { return HandlingType == HandlingType.SportingEquipment ? "Sporting equipment" : HandlingType.ToString(); }
+        get { return HandlingType.ToDisplayName(); }
     }
 
     /// <summary>Loaded time in Brisbane time (UTC+10), or "-" if the bag was not loaded.</summary>

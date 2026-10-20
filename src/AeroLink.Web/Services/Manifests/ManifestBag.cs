@@ -37,14 +37,7 @@ public class ManifestBag
     /// <summary>Bag type as text for the screen, e.g. "Sporting equipment".</summary>
     public string TypeText
     {
-        get
-        {
-            if (HandlingType == HandlingType.SportingEquipment)
-            {
-                return "Sporting equipment";
-            }
-            return HandlingType.ToString();
-        }
+        get { return HandlingType.ToDisplayName(); }
     }
 
     /// <summary>Loading status as text for the screen.</summary>
