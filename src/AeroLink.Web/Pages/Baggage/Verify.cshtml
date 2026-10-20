@@ -76,6 +76,9 @@ else
                     <input type="hidden" asp-for="FlightId" />
                     <input type="hidden" name="Tag" value="@result.Tag" />
                     <button type="submit" class="btn btn-success">Confirm loaded</button>
+                    @* I4: if the bag turns out to be damaged or has another problem, report it instead of loading. *@
+                    <a class="btn btn-outline-danger ms-2" asp-page="./ReportProblem"
+                       asp-route-flightId="@flight.FlightId" asp-route-tag="@result.Tag">Report a problem with this bag</a>
                 </form>
             </div>
         </div>
